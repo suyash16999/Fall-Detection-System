@@ -31,7 +31,7 @@ def running_average_simple(seq, window=100):
 print(running_average_simple(sequence))'''
 
 def converting():
-    path = "Fall-Detection-System/Sisfall_dataset/"
+    path = "Sisfall_dataset/"
     allFiles = glob.glob(path + "*")
     for file_ in allFiles:
         allfiles2 =glob.glob(file_+"/*.txt")
