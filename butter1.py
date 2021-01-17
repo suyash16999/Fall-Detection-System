@@ -1,46 +1,23 @@
-from scipy.signal import butter, freqz, freqs
-import matplotlib.pyplot as plt
-from math import pi
 import numpy as np
+import matplotlib.pyplot as plt
+from scipy import signal
 
-f_s = 360    # Sample frequency in Hz
-f_c = 45     # Cut-off frequency in Hz
-order = 4    # Order of the butterworth filter
+fs = 1000  # Sampling frequency
+# Generate the time vector properly
+t = np.arange(1000) / fs
+signala = np.sin(2*np.pi*100*t) # with frequency of 100
+#plt.plot(t, signala, label='a')
 
-omega_c = 2 * pi * f_c       # Cut-off angular frequency
-omega_c_d = omega_c / f_s    # Normalized cut-off frequency (digital)
+signalb = np.sin(2*np.pi*20*t) # frequency 20
+#plt.plot(t, signalb, label='b')
 
-# Design the digital Butterworth filter
-b, a = butter(order, omega_c_d / pi)    
-print('Coefficients')
-print("b =", b)                           # Print the coefficients
-print("a =", a)
+signalc = signala + signalb
+plt.plot(t, signalc, label='c')
 
-w, H = freqz(b, a, 4096)                  # Calculate the frequency response
-w *= f_s / (2 * pi)                       # Convert from rad/sample to Hz
-
-# Plot the amplitude response
-plt.subplot(2, 1, 1)            
-plt.suptitle('Bode Plot')
-H_dB = 20 * np.log10(abs(H))              # Convert modulus of H to dB
-plt.plot(w, H_dB)
-plt.ylabel('Magnitude [dB]')
-plt.xlim(0, f_s / 2)
-plt.ylim(-80, 6)
-plt.axvline(f_c, color='red')
-plt.axhline(-3, linewidth=0.8, color='black', linestyle=':')
-
-# Plot the phase response
-plt.subplot(2, 1, 2)
-phi = np.angle(H)                         # Argument of H
-phi = np.unwrap(phi)                      # Remove discontinuities 
-phi *= 180 / pi                           # and convert to degrees
-plt.plot(w, phi)
-plt.xlabel('Frequency [Hz]')
-plt.ylabel('Phase [°]')
-plt.xlim(0, f_s / 2)
-plt.ylim(-360, 0)
-plt.yticks([-360, -270, -180, -90, 0])
-plt.axvline(f_c, color='red')
-
+fc = 30  # Cut-off frequency of the filter
+w = fc / (fs / 2) # Normalize the frequency
+b, a = signal.butter(5, w, 'low')
+output = signal.filtfilt(b, a, signalc)
+plt.plot(t, output, label='filtered')
+plt.legend()
 plt.show()
