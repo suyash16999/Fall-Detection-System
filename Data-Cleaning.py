@@ -1,5 +1,9 @@
 import pandas as pd
 import glob
+import os
+import numpy as np
+import configparser as cp
+import math
 
 def organize_dataset(path):
     col_names = ["ax","ay","az","gx","gy","gz","acx","acy","acz"]
@@ -9,12 +13,23 @@ def organize_dataset(path):
     data = data.drop('acy', axis=1)
     data = data.drop('acz', axis=1)
     data.insert(loc = 0, column = 'time', value=data.index*0.005)
-    data['path'] = path
-    print(data.head(2))
-    data['rolling_mean'] = data['ax'].rolling(window=200).mean()
-    data = data[['time', 'rolling_mean', 'ax']]
-    print(data.tail(2))
-    print(data.shape)
+
+    ax = data['ax'] * data['ax']
+    ay = data['ay'] * data['ay']
+    az = data['az'] * data['az']
+    am = ax + ay + az
+    am = am.apply(lambda x: math.sqrt(x))
+    data['accmagnitude'] = am
+    gx = data['gx'] * data['gx']
+    gy = data['gy'] * data['gy']
+    gz = data['gz'] * data['gz']
+    gm = gx + gy + gz
+    gm = gm.apply(lambda x: math.sqrt(x))
+    data['gccmagnitude'] = gm
+    scaled_training_df = pd.DataFrame(data)
+    path=path[21:33]
+    scaled_training_df.to_csv("CSV_Dataset_Magnitude/"+path+".csv", index=False)
+
 
 def Sisfall_analysis():
     path = "Sisfall_dataset/"
@@ -23,7 +38,8 @@ def Sisfall_analysis():
         allfiles2 =glob.glob(file_+"/*.txt")
         for file_2 in allfiles2:
             organize_dataset(file_2)
-
+            #calculatemagnitude()
+    
 Sisfall_analysis()
 
 
