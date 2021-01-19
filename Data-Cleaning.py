@@ -27,8 +27,8 @@ def organize_dataset(path):
     gm = gm.apply(lambda x: math.sqrt(x))
     data['gccmagnitude'] = gm
     scaled_training_df = pd.DataFrame(data)
-    file_2=file_2[12:]
-    scaled_training_df.to_csv("CSV_Dataset_Magnitude/"+file_2, index=False)
+    path=path[21:33]
+    scaled_training_df.to_csv("CSV_Dataset_Magnitude/"+path+".csv", index=False)
 
 
 def Sisfall_analysis():
