@@ -24,9 +24,9 @@ def getfeatures(axis,start,end):
         axis[start:end].var(),
         axis[start:end].min(),
         axis[start:end].max(),
-        skew(axis[start:end]),
-        kurtosis(axis[start:end]),
-        math.sqrt(sqd_error.mean())
+        #skew(axis[start:end]),
+        #kurtosis(axis[start:end]),
+        #math.sqrt(sqd_error.mean())
     ]
 
 def features(data):

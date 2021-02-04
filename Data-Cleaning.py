@@ -12,7 +12,7 @@ def organize_dataset(path):
     data = data.drop('acx', axis=1)
     data = data.drop('acy', axis=1)
     data = data.drop('acz', axis=1)
-    data.insert(loc = 0, column = 'time', value=data.index*0.005)
+    data.insert(loc = 0, column = 'time', value=data.index)
 
     ax = data['ax'] * data['ax']
     ay = data['ay'] * data['ay']
@@ -38,8 +38,7 @@ def Sisfall_analysis():
         allfiles2 =glob.glob(file_+"/*.txt")
         for file_2 in allfiles2:
             organize_dataset(file_2)
-            #calculatemagnitude()
-    
+
 Sisfall_analysis()
 
 
