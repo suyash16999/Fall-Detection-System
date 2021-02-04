@@ -7,6 +7,7 @@ import numpy as np
 import configparser as cp
 from statsmodels.tsa import stattools
 
+#Sliding window with 50% overlap. Feature extraction can be tried for different window widths(d) to observe which one gives better results
 def slot(timestamp,d=2000):
     start = 0;
     size = timestamp.count();
