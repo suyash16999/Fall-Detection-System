@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-dataset = pd.read_csv('features500.csv')
+dataset = pd.read_csv('Extracted_Features.csv')
 dataset.dropna(axis = 0, inplace = True)
 dataset = dataset.sample(frac = 1) 
 
@@ -28,7 +28,7 @@ y_pred = rf_classifier.predict(X_test)
 from sklearn.metrics import accuracy_score, confusion_matrix, precision_score, recall_score, roc_auc_score, roc_curve, f1_score
 
 accuracy_score(y_test, y_pred)
-print(f"The accuracy of the model is {round(accuracy_score(y_test,y_pred),3)*100} %")
+print("The accuracy of the model is  {} %".format(str(round(accuracy_score(y_test,y_pred),3)*100)))
 
 # Making the Confusion Matrix
 from sklearn.metrics import confusion_matrix

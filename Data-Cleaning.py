@@ -32,14 +32,19 @@ def organize_dataset(path):
 
 
 def Sisfall_analysis():
-    path = "Sisfall_dataset/"
+    path = "SisFall_dataset/"
     allFiles = glob.glob(path + "*")
     for file_ in allFiles:
         allfiles2 =glob.glob(file_+"/*.txt")
         for file_2 in allfiles2:
             organize_dataset(file_2)
+            print("Done: ", file_2)
 
-Sisfall_analysis()
+if __name__ == "__main__":
+    if not os.path.exists('CSV_Dataset_Magnitude'):
+        os.makedirs('CSV_Dataset_Magnitude')
+
+    Sisfall_analysis()
 
 
 
