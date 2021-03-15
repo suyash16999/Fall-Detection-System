@@ -4,6 +4,8 @@ import os
 import numpy as np
 import configparser as cp
 import math
+import matplotlib.pyplot as plt
+from scipy import signal
 
 def organize_dataset(path):
     col_names = ["ax","ay","az","gx","gy","gz","acx","acy","acz"]
@@ -26,10 +28,19 @@ def organize_dataset(path):
     gm = gx + gy + gz
     gm = gm.apply(lambda x: math.sqrt(x))
     data['gccmagnitude'] = gm
+    for i in ["ax","ay","az","gx","gy","gz","accmagnitude","gccmagnitude"]:
+        data[i] = filter(data[i],data['time'],i)
     scaled_training_df = pd.DataFrame(data)
     path=path[21:33]
     scaled_training_df.to_csv("CSV_Dataset_Magnitude/"+path+".csv", index=False)
 
+def filter(Signal,t,i):
+    fs = 200
+    fc = 5  # Cut-off frequency of the filter
+    w = fc / (fs / 2) # Normalize the frequency
+    b, a = signal.butter(4, w, 'low')
+    output = signal.filtfilt(b, a, Signal)
+    return output
 
 def Sisfall_analysis():
     path = "SisFall_dataset/"
@@ -45,6 +56,7 @@ if __name__ == "__main__":
         os.makedirs('CSV_Dataset_Magnitude')
 
     Sisfall_analysis()
+    
 
 
 
