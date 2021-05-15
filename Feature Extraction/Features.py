@@ -6,6 +6,7 @@ import math
 import numpy as np
 import configparser as cp
 from statsmodels.tsa import stattools
+import entropy as ent
 
 #Sliding window with 50% overlap. Feature extraction can be tried for different window widths(d) to observe which one gives better results
 def slot(timestamp,d=2000):
@@ -15,33 +16,37 @@ def slot(timestamp,d=2000):
     while (start < size):
         end = start + d
         yield start, end
-        start = start + int(d / 2)
+        start = start + int(d/2)
 
-def getfeatures(axis,start,end):
-    sqd_error = (axis[start:end] - axis[start:end].mean()) ** 2
-    return [
-        axis[start:end].mean(),
-        axis[start:end].std(),
-        axis[start:end].var(),
-        axis[start:end].min(),
-        axis[start:end].max(),
-        skew(axis[start:end]),
-        kurtosis(axis[start:end]),
-        math.sqrt(sqd_error.mean())
+def getfeatures(data,start,end,axis):
+    sqd_error = (data[start:end] - data[start:end].mean()) ** 2
+    features = [
+        data[start:end].mean(),
+        data[start:end].std(),
+        data[start:end].var(),
+        data[start:end].min(),
+        data[start:end].max(),
+        skew(data[start:end]),
+        kurtosis(data[start:end]),
+        #math.sqrt(sqd_error.mean())
     ]
+    if axis=='accmagnitude' or axis=='gccmagnitude':
+        print("successful")
+        features.append(ent.spectral_entropy(data[start:end], 200, method='fft'))
+    print(features)
+    return features
 
 def features(data):
     for (start, end) in slot(data['time']):
         features = []
         for axis in ['ax', 'ay', 'az','gx','gy','gz','accmagnitude', 'gccmagnitude']:
-            features += getfeatures(data[axis], start, end)
+            features += getfeatures(data[axis], start, end, axis)
         yield features
 
 def get_activity(filepath):
 
     activity=filepath[22:]
     activity=activity[:1]
-    #print(activity)
     if activity =='D':
         return 0.0
     elif activity=='F':
@@ -50,9 +55,8 @@ def get_activity(filepath):
         print("Invalid File Name")
 
 
-with open('features500.csv', 'w') as out:
-    rows = csv.writer(out)
-   
+with open('Extracted_Features.csv', 'w') as out:
+    rows = csv.writer(out)   
     path = "CSV_Dataset_Magnitude/"
     allFiles = glob.glob(path + "*.csv")
     for file_ in allFiles:
